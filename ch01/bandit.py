@@ -6,11 +6,12 @@ import numpy as np
 
 
 class Bandit(gym.Env):
-    def __init__(self, num_arms):
+    def __init__(self, num_arms, reset_listener=None):
         self._num_arms = num_arms
         self.action_space = spaces.Discrete(num_arms)
         self.observation_space = spaces.Discrete(1)
         self._reward_mean = None
+        self._reset_listener = reset_listener
 
     def step(self, action):
         assert self.action_space.contains(action)
@@ -19,6 +20,8 @@ class Bandit(gym.Env):
 
     def reset(self):
         self._reward_mean = np.random.normal(0, 1, (self.num_arms, ))
+        if self._reset_listener:
+            self._reset_listener(self._reward_mean)
 
     def render(self, mode='human'):
         pass
